@@ -1,8 +1,13 @@
 import { useRef, useEffect, useState } from "react";
+import { db } from "../appwrite/databases";
 import Trash from "../icons/Trash";
+import Spinner from "../icons/Spinner";
 import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils";
 
 const NoteCard = ({ note }) => {
+  const [saving, setSaving] = useState(false);
+  const keyUpTimer = useRef(null);
+
   const colors = JSON.parse(note.colors);
   const [position, setPosition] = useState(JSON.parse(note.position));
   const body = bodyParser(note.body);
@@ -40,6 +45,30 @@ const NoteCard = ({ note }) => {
   const mouseUp = () => {
     document.removeEventListener("mousemove", mouseMove);
     document.removeEventListener("mouseup", mouseUp);
+    const newPosition = setNewOffset(cardRef.current);
+    saveData("position", newPosition);
+  };
+
+  const saveData = async (key, value) => {
+    const payload = { [key]: JSON.stringify(value) };
+    try {
+      await db.notes.update(note.$id, payload);
+    } catch (error) {
+      console.error(error);
+    }
+    setSaving(false);
+  };
+
+  const handleKeyUp = () => {
+    setSaving(true);
+
+    if (keyUpTimer.current) {
+      clearTimeout(keyUpTimer.current);
+    }
+
+    keyUpTimer.current = setTimeout(() => {
+      saveData("body", textAreaRef.current.value);
+    }, 2000);
   };
 
   return (
@@ -60,9 +89,16 @@ const NoteCard = ({ note }) => {
         }}
       >
         <Trash />
+        {saving && (
+          <div className="card-saving">
+            <Spinner color={colors.colorText} />
+            <span style={{ color: colors.colorText }}>Saving...</span>
+          </div>
+        )}
       </div>
       <div className="card-body">
         <textarea
+          onKeyUp={handleKeyUp}
           ref={textAreaRef}
           style={{ color: colors.colorText }}
           defaultValue={body}
