@@ -1,8 +1,3 @@
-# React + Vite
+## Sticky Notes Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Create a sticky notes application using JavaScript and Appwrite. Appwrite is an open-source, self-hosted Backend as a Service (BaaS) platform that simplifies building backends. Appwrite provided a grant to make this course possible.
